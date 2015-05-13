@@ -7,3 +7,5 @@ directory.
 
 main_app.py will run a loop with a webcam looking for qrs to play
 and will excecute commands.
+
+relies on zbar
