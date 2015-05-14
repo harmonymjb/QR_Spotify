@@ -4,9 +4,9 @@ import qrcode
 import json
 import urllib
 import re
+from zbarfunc import QRCODE_PATH
 
-SPOTIFY = spotipy.Spotify()
-QR_DIRECTORY = 'qrcodes/'
+SPOTIPY = spotipy.Spotify()
 
 
 def ms_to_hr(total_milliseconds):
@@ -40,23 +40,23 @@ def get_artist_albums(artist_uri):
 
 	"""
 
-    albums_results = SPOTIFY.artist_albums(
+    albums_results = SPOTIPY.artist_albums(
         artist_uri,
         album_type='album', limit=50, country='CA'
     )
     albums_items = albums_results['items']
-    singles_results = SPOTIFY.artist_albums(
+    singles_results = SPOTIPY.artist_albums(
         artist_uri,
         album_type='single', limit=50, country='CA'
     )
     singles_items = singles_results['items']
 
     while albums_results['next']:
-        albums_results = SPOTIFY.next(albums_results)
+        albums_results = SPOTIPY.next(albums_results)
         albums_items.extend(albums_results['items'])
 
     while singles_results['next']:
-        singles_results = SPOTIFY.next(singles_results)
+        singles_results = SPOTIPY.next(singles_results)
         singles_items.extend(singles_results['items'])
 
     albums = []
@@ -99,16 +99,16 @@ def get_artist_albums(artist_uri):
             )
 
     for album in albums:
-        searched_artist = SPOTIFY.artist(artist_uri)['name']
+        searched_artist = SPOTIPY.artist(artist_uri)['name']
         album[u'artists'] = [{u'name': searched_artist, u'uri': artist_uri}]
-        album = SPOTIFY.album(album['uri'])
+        album = SPOTIPY.album(album['uri'])
         album[u'release_date'] = album[u'release_date']
         album[u'tracks'] = []
 
-        track_results = SPOTIFY.album(album['uri'])['tracks']
+        track_results = SPOTIPY.album(album['uri'])['tracks']
         track_items = track_results['items']
         while track_results['next']:
-            track_results = SPOTIFY.next(track_results)
+            track_results = SPOTIPY.next(track_results)
             track_items.extend(track_results['items'])
 
         for track in track_items:
@@ -158,7 +158,12 @@ def human_album(album):
     artist = re.sub('/', '-', artist)
     album_type = re.sub('/', '-', album_type)
     album_name = re.sub('/', '-', album_name)
-    location = QR_DIRECTORY + artist + '/' + album_type + '/' + album_name
+    location = (
+        QRCODE_PATH +
+        artist + '/'
+        + album_type + '/' +
+        album_name
+    )
 
     if os.path.isfile(location):
         return album
@@ -213,7 +218,7 @@ def create_qrcode(album):
     artist = re.sub('/', '-', artist)
     album_type = re.sub('/', '-', album_type)
     album_name = re.sub('/', '-', album_name)
-    location = QR_DIRECTORY + artist + '/' + album_type + '/' + album_name
+    location = QRCODE_PATH + artist + '/' + album_type + '/' + album_name
 
     if os.path.isfile(location + '.png'):
         return album
@@ -238,7 +243,7 @@ def save_json(album):
     artist = re.sub('/', '-', artist)
     album_type = re.sub('/', '-', album_type)
     album_name = re.sub('/', '-', album_name)
-    location = QR_DIRECTORY + artist + '/' + album_type + '/' + album_name
+    location = QRCODE_PATH + artist + '/' + album_type + '/' + album_name
 
     if os.path.isfile(location + '.json'):
         return album
@@ -264,7 +269,7 @@ def download_art(album):
     artist = re.sub('/', '-', artist)
     album_type = re.sub('/', '-', album_type)
     album_name = re.sub('/', '-', album_name)
-    location = QR_DIRECTORY + artist + '/' + album_type + '/' + album_name
+    location = QRCODE_PATH + artist + '/' + album_type + '/' + album_name
 
     if os.path.isfile(location + '.jpeg'):
         return album
@@ -290,7 +295,7 @@ def full_artists(albums):
 
     artist = artists[0]['name']
     artist = re.sub('/', '-', artist)
-    location = QR_DIRECTORY + artist + '/' + 'all_artists'
+    location = QRCODE_PATH + artist + '/' + 'all_artists'
     with open(location.encode('utf-8'), 'w') as text_file:
         for line in artists:
             text_file.write(
@@ -331,7 +336,7 @@ def search_for_artist(search_term):
     """
 
 
-    results = SPOTIFY.search(search_term, type='artist')
+    results = SPOTIPY.search(search_term, type='artist')
     artists = results['artists']['items']
     results_index = 0
     while True:
@@ -367,7 +372,7 @@ def search_for_artist(search_term):
 #for composer in composers:
 #    search_for_artist(composer.strip())
 
-
-while True:
-    if search_for_artist(raw_input("Enter a search query: ").strip()) == 0:
-        break
+def artist_search_loop():
+    while True:
+        if search_for_artist(raw_input("Enter a search query: ").strip()) == 0:
+            break
