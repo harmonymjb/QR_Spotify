@@ -1,11 +1,10 @@
 # QR_Spotify
-A spotify control written in python that generates and uses QR codes.
+main_app.py runs in a terminal allowing entry via QR code of generated plain text commands that point to functions.
 
-album_search.py allows searching by use input for artist names and
-will save and create the appropriate information in the QRCodes
-directory.
+These functions control media playback via Spotify and mpd.
 
-main_app.py will run a loop with a webcam looking for qrs to play
-and will excecute commands.
+QR codes can be encoded with links to playlists, albums, artist, or tracks of music.
 
-relies on zbar
+Try the qrcodes/functions/artist_search.png code and enter an artist with tracks available on spotify. The program will generate QR codes for each album referencing that artist and place them along with plain text information, a json file, and album art in qrcodes/.
+
+The other generated QR codes in qrcode/functions/ can be used to control mpd or spotify.
