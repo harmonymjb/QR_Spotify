@@ -1,4 +1,3 @@
-import os
 import zbarfunc
 import album_search
 from spotify_qdbus import Spotify
@@ -29,7 +28,7 @@ def qr_functions(last_code):
         'break'
     ]
     for each in media_functions:
-        zbarfunc.save_qrcode(each, 'functions/' + each)
+        zbarfunc.QRCode.save_qrcode(each, 'functions/' + each)
     MPD_CLIENT.noidle()
     if scanned_code != last_code and scanned_code in media_functions:
         if scanned_code == 'artist_search':

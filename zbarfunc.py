@@ -25,9 +25,9 @@ class QRCode():
         for symbol in self.proc.results:
             return symbol.data
 
-
-def save_qrcode(content, name):
-    img = qrcode.make(content)
-    if not os.path.exists(os.path.dirname(QRCODE_PATH + name + '.png')):
-        os.makedirs(os.path.dirname(QRCODE_PATH + name + '.png'))
-    img.save(QRCODE_PATH + name + '.png')
+    @staticmethod
+    def save_qrcode(content, name):
+        img = qrcode.make(content)
+        if not os.path.exists(os.path.dirname(QRCODE_PATH + name + '.png')):
+            os.makedirs(os.path.dirname(QRCODE_PATH + name + '.png'))
+        img.save(QRCODE_PATH + name + '.png')
